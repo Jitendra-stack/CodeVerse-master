@@ -3,8 +3,9 @@ FROM python:3.10-slim
 WORKDIR /app
 
 COPY requirements.txt ./
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:8000", "codeverse.wsgi:application"]
+# Run migrations before starting the server
+CMD ["sh", "-c", "python manage.py migrate && gunicorn --workers 3 --bind 0.0.0.0:8000 codeverse.wsgi:application"]
